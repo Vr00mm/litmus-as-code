@@ -43,7 +43,7 @@ function graphql_request()
 function create_user()
 {
 	USER_UID=`get_user_uid`
-	graphql_request "{\"operationName\":\"CreateUser\",\"variables\":{\"user\":{\"username\":\"${LITMUS_USERNAME}\",\"email\":\"\",\"name\":\"\",\"role\":\"admin\",\"userID\":\"${USER_UID}\"}},\"query\":\"mutation CreateUser(\$user: CreateUserInput! ) {\\n  createUser(user: \$user) {\\n    username\\n    created_at\\n    updated_at\\n    deactivated_at\\n    __typename\\n  }\\n}\\n\"}"
+	graphql_request $"{"operationName":"CreateUser","variables":{"user":{"username":"${LITMUS_USERNAME}","email":"","name":"","role":"admin","userID":"${USER_UID}"}},"query":"mutation CreateUser(\$user: CreateUserInput! ) {  createUser(user: \$user) {    username    created_at    updated_at    deactivated_at    __typename  }}"}"
         login
 
 }
