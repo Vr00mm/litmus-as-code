@@ -8,7 +8,7 @@ source /functions.sh
 LITMUS_CONFIGURATION_PATH="${1}"
 
 login
-#create_user
+create_user
 create_or_update_projects
 get_projects
 deploy_agents
