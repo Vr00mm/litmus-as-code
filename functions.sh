@@ -13,13 +13,13 @@ function decode_jwt(){
 
 function login()
 {
-      STATUS=$(curl -vvvv -s -o /dev/null -w '%{http_code}' -XGET ${LITMUS_URL})
+      STATUS=$(curl -vvvv -s -o /dev/null -w '%{http_code}' -XGET ${LITMUS_URL} 2>/dev/null)
       if [ $STATUS -ne 200 ] ; then
         echo "Smoke test failed litmus unreachable !"
         exit 1;
       fi
 
-    response=`curl --silent -X POST --header "Content-Type=application/json" -d "{\"username\": \"${LITMUS_USERNAME}\", \"password\": \"${LITMUS_PASSWORD}\"}" "${LITMUS_URL}/auth/login"`
+    response=`curl --silent -X POST --header "Content-Type=application/json" -d "{\"username\": \"${LITMUS_USERNAME}\", \"password\": \"${LITMUS_PASSWORD}\"}" "${LITMUS_URL}/auth/login" 2>/dev/null`
     export TOKEN=`echo ${response} |jq -r '.access_token // "null"'`
     if [ "${TOKEN}" == "null" ]; then
 	echo "Une erreur est survenue."
@@ -37,7 +37,7 @@ function graphql_request()
         --header "Content-Type: application/json" \
         --header "Authorization: ${TOKEN}" \
         -d "${REQUEST}" \
-        "${LITMUS_URL}/api/query"
+        "${LITMUS_URL}/api/query" 2>/dev/null
 
 }
 
