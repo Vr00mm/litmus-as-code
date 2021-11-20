@@ -43,7 +43,7 @@ function graphql_request()
 function create_user()
 {
 	USER_UID=`get_user_uid`
-	graphql_request "{\"operationName\":\"CreateUser\",\"variables\":{\"user\":{\"username\":\"${LITMUS_USERNAME}\",\"email\":\"\",\"name\":\"\",\"role\":\"admin\",\"userID\":\"${USER_UID}\"}},\"query\":\"mutation CreateUser(\$user: CreateUserInput! ) {\\n  createUser(user: \$user) {\\n    username\\n    created_at\\n    updated_at\\n    deactivated_at\\n    __typename\\n  }\\n}\\n\"}"
+	graphql_request "{\"operationName\":\"CreateUser\",\"variables\":{\"user\":{\"username\":\"${LITMUS_USERNAME}\",\"email\":\"\",\"name\":\"\",\"role\":\"admin\",\"userID\":\"${USER_UID}\"}},\"query\":\"mutation CreateUser(\$user: CreateUserInput! ) {\\n  createUser(user: \$user) {\\n    username\\n    created_at\\n    updated_at\\n    deactivated_at\\n    __typename\\n  }\\n}\\n\"}" >/dev/null
         login
 
 }
@@ -66,7 +66,7 @@ function get_projects()
 function create_project()
 {
     PROJECT_NAME="${1}"
-    graphql_request "{\"operationName\":\"createProject\",\"variables\":{\"projectName\":\"${PROJECT_NAME}\"},\"query\":\"mutation createProject(\$projectName: String! ) {\\n  createProject(projectName: \$projectName) {\\n    members {\\n      user_id\\n      role\\n      user_name\\n      invitation\\n      joined_at\\n      __typename\\n    }\\n    name\\n    id\\n    __typename\\n  }\\n}\\n\"}"
+    graphql_request "{\"operationName\":\"createProject\",\"variables\":{\"projectName\":\"${PROJECT_NAME}\"},\"query\":\"mutation createProject(\$projectName: String! ) {\\n  createProject(projectName: \$projectName) {\\n    members {\\n      user_id\\n      role\\n      user_name\\n      invitation\\n      joined_at\\n      __typename\\n    }\\n    name\\n    id\\n    __typename\\n  }\\n}\\n\"}" >/dev/null
 }
 
 function add_gitops()
@@ -76,7 +76,7 @@ function add_gitops()
     GITOPS_URL="${2}"
     GITOPS_BRANCH="${3}"
     GITOPS_SSH_KEY="${4}"
-    graphql_request "{\"operationName\":\"enableGitOps\",\"variables\":{\"gitConfig\":{\"ProjectID\":\"${PROJECT_ID}\",\"RepoURL\":\"${GITOPS_URL}\",\"Branch\":\"${GITOPS_BRANCH}\",\"AuthType\":\"ssh\",\"Token\":\"\",\"UserName\":\"user\",\"Password\":\"user\",\"SSHPrivateKey\":\"${GITOPS_SSH_KEY}\"}},\"query\":\"mutation enableGitOps(\$gitConfig: GitConfig! ) {\n  enableGitOps(config: \$gitConfig)\n}\n\"}"
+    graphql_request "{\"operationName\":\"enableGitOps\",\"variables\":{\"gitConfig\":{\"ProjectID\":\"${PROJECT_ID}\",\"RepoURL\":\"${GITOPS_URL}\",\"Branch\":\"${GITOPS_BRANCH}\",\"AuthType\":\"ssh\",\"Token\":\"\",\"UserName\":\"user\",\"Password\":\"user\",\"SSHPrivateKey\":\"${GITOPS_SSH_KEY}\"}},\"query\":\"mutation enableGitOps(\$gitConfig: GitConfig! ) {\n  enableGitOps(config: \$gitConfig)\n}\n\"}" >/dev/null
 }
 
 function add_hub()
@@ -147,11 +147,11 @@ function deploy_agents()
         TARGET=`echo $row | base64 --decode`
         echo -n > $HOME/.litmusconfig
         litmusctl config set-account --endpoint "${LITMUS_URL}" --password="${LITMUS_PASSWORD}" --username="${LITMUS_USERNAME}"
-        kubectl config use-context ${TARGET}
+        kubectl config use-context ${TARGET} >/dev/null
         agentExist=`litmusctl get agents --project-id="${PROJECT_ID}" -ojson |jq -r ".getCluster[] | select(.cluster_name==\"agent-${TARGET}\") // \"\""`
         if [ -z $agentExist ]
         then
-          litmusctl create agent --namespace litmus --project-id="${PROJECT_ID}" --agent-name="agent-${TARGET}" --non-interactive
+          litmusctl --kubeconfig "${KUBECONFIG}" create agent --namespace litmus --project-id="${PROJECT_ID}" --agent-name="agent-${TARGET}" --non-interactive
         fi
     done
 }
