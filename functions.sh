@@ -31,15 +31,14 @@ function graphql_request()
 {
 	REQUEST="${1}"
         curl --silent \
-        -o /dev/null \
         -X POST \
         --header "User-Agent: Go-http-client/1.1" \
         --header "Content-Type: application/json" \
         --header "Authorization: ${TOKEN}" \
         -d "${REQUEST}" \
         "${LITMUS_URL}/api/query" 2>/dev/null
-
 }
+
 
 function create_user()
 {
@@ -61,7 +60,7 @@ function get_project_id()
 
 function get_projects()
 {
-	graphql_request '{"query":"query{listProjects{id name created_at}}"}' |jq
+	graphql_request '{"query":"query{listProjects{id name created_at}}"}'
 }
 
 function create_project()
