@@ -151,7 +151,7 @@ function deploy_agents()
         agentExist=`litmusctl get agents --project-id="${PROJECT_ID}" -ojson |jq -r ".getCluster[] | select(.cluster_name==\"agent-${TARGET}\") // \"\""`
         if [ -z $agentExist ]
         then
-          litmusctl create agent --namespace oi137-litmus --project-id="${PROJECT_ID}" --agent-name="agent-${TARGET}" --non-interactive
+          litmusctl create agent --namespace litmus --project-id="${PROJECT_ID}" --agent-name="agent-${TARGET}" --non-interactive
         fi
     done
 }
