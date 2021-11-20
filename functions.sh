@@ -31,6 +31,7 @@ function graphql_request()
 {
 	REQUEST="${1}"
         curl --silent \
+        -o /dev/null \
         -X POST \
         --header "User-Agent: Go-http-client/1.1" \
         --header "Content-Type: application/json" \
